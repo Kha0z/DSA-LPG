@@ -1,0 +1,95 @@
+
+This document defines the PDL (pseudocode) of the entire program, in which some 
+are seperated into subroutines (aka functions) for increased readability
+
+Purpose:
+Our client is UNO Gas Services Pty. Ltd.
+LPG can types: 12.7kg, 14kg, 50kg
+Customer types: households or establishment
+Allows admin to store name, addr and other info (like order qty?) of regular customers
+Keeps track of the type of customer and the products they order
+The operator of the software keys in the order by customer, allow op to look up product and unit price
+Must produce receipt upon order completion
+Keep track of LPG in stock of each type
+
+Datatypes to program for:
+Customer (customer ID, customer type, name, address, past history??) -> Program a "customer console" to manage them
+LPG counter to count for each type of LPG bought -> Add variables for all 3 types of LPG cans
+Order (customer ID, 12.7kg count, 14kg count, 50kg count) -> Program a "order mode" to generate orders, 
+															 deduct inventory and produce receipts,
+															 making sure to display the product price when ordering
+
+
+>> Starting point of the program, allows user to select customer or order mode
+SUBROUTINE Init_Mode returns Customer_Console or Order_Mode
+	OUTPUT initial message here
+	DO WHILE input_char is not 'c' or 'o'
+		SET input_char to INPUT
+		SET input_char to lower case
+		IF input_char is not 'c' or 'o'
+			OUTPUT invalid input error message
+		ENDIF
+	ENDDO WHILE
+	IF input_char is 'c'
+		RETURN Customer_Console
+	ELSE
+		RETURN Order_Mode
+	ENDIF
+ENDSUBROUTINE
+
+>> Provides a console experience: 
+>> LIST->List all customer records
+>> HISTORY <customerID>->Lists order history
+>> DELETE <customerID>->Deletes customer
+>> NEW <customerID>->Adds a new order to the customer, and later produces a receipt
+>> HELP->Shows the help file
+>> EXIT->Returns to the previous menu
+SUBROUTINE Customer_Console_Menu
+	OUTPUT initial message here
+	DO WHILE input_char is not 'c' or 'o'
+		OUTPUT "> "
+		SET input_char to INPUT
+		SET input_char to lower case
+		IF input_char is not 'c' or 'o'
+			OUTPUT invalid input error message
+		ENDIF
+	ENDDO WHILE
+	IF input_char is 'c'
+		RETURN Customer_Console
+	ELSE
+		RETURN Order_Mode
+	ENDIF
+ENDSUBROUTINE
+
+
+CALL begin(9600) to start serial connection for debugging
+SET LDR_PIN's mode to INPUT
+CALL attachInterrupt to attach FALLING to INT0 (pin 2)
+
+CALL sevseg.begin to configure 7 segment display
+CALL sevseg.setBrightness to predefined brightness level
+
+CALL servo.attach to attach servo to SERVO_PIN
+
+LOOP
+    CALL sevseg.setNumber to display hit_count
+    IF current time passed cooloff time THEN
+        SET target_up to true
+    ENDIF 
+    IF target_up is true THEN                               
+        CALL servo.write with an angle of 90                
+    ELSE                                                    
+        CALL servo.write with an angle of 0                 
+    ENDIF                                                   
+    CALL sevseg.refreshDisplay to refresh the display       
+ENDLOOP                                                     
+                                                            
+ISR0                                                        
+    SET hit_millis to the result of CALL millis             
+    IF more than COOLOFF has passed since last_hit THEN     
+        SET last_hit to hit_millis                          
+        SET target_up to false                              
+        SET hit_count to increment by 1                     
+        CALL Serial.println to print debug message          
+    ENDIF                                                   
+ENDISR0                                                     
