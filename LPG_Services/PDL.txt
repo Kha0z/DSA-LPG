@@ -65,8 +65,8 @@ SUBROUTINE Command_Mode
 			IF c is 'y'
 				delete the history of the customer
 			ENDIF
-		ELSEIF input_buffer is "NEW <customerID>"
-			CALL New_Customer(<customerID>)
+		ELSEIF input_buffer is "NEW"
+			CALL New_Customer
 		ELSEIF input_buffer is "ORDER <customerID>"
 			CALL Order(<customerID>)
 		ELSEIF input_buffer is "HELP"
