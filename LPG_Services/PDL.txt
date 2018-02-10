@@ -45,7 +45,7 @@ ENDSUBROUTINE
 >> ORDER <customerID>->Adds a new order to the customer, and later produces a receipt
 >> HELP->Shows the help file
 >> EXIT->Returns to the previous menu
-SUBROUTINE Customer_Console_Menu
+SUBROUTINE Command_Mode
 	OUTPUT initial message here
 	DO WHILE input_buffer is not 'EXIT'
 		OUTPUT "> "
