@@ -19,21 +19,21 @@ Order (customer ID, 12.7kg count, 14kg count, 50kg count) -> Program a "order mo
 															 deduct inventory and produce receipts,
 															 making sure to display the product price when ordering
 
-
->> Starting point of the program, allows user to select customer or order mode
-SUBROUTINE Init_Mode returns Customer_Console or Order_Mode
-	OUTPUT initial message here
-	DO WHILE input_char is not 'c' or 'o'
+>> Starting point of the program, allows the user to log in
+SUBROUTINE Init_Mode returns true or false
+	OUTPUT initial message and "Do you want to log into the console (y/n): "
+	SET input_char to null character
+	DO WHILE input_char is not 'y' and not 'n'
 		SET input_char to INPUT
 		SET input_char to lower case
-		IF input_char is not 'c' or 'o'
+		IF input_char is not 'y' and not 'n'
 			OUTPUT invalid input error message
 		ENDIF
 	ENDDO WHILE
-	IF input_char is 'c'
-		RETURN Customer_Console
+	IF input_char is 'y'
+		RETURN true
 	ELSE
-		RETURN Order_Mode
+		RETURN false
 	ENDIF
 ENDSUBROUTINE
 
@@ -41,24 +41,40 @@ ENDSUBROUTINE
 >> LIST->List all customer records
 >> HISTORY <customerID>->Lists order history
 >> DELETE <customerID>->Deletes customer
->> NEW <customerID>->Adds a new order to the customer, and later produces a receipt
+>> NEW->Adds a new customer to the database
+>> ORDER <customerID>->Adds a new order to the customer, and later produces a receipt
 >> HELP->Shows the help file
 >> EXIT->Returns to the previous menu
 SUBROUTINE Customer_Console_Menu
 	OUTPUT initial message here
-	DO WHILE input_char is not 'c' or 'o'
+	DO WHILE input_buffer is not 'EXIT'
 		OUTPUT "> "
-		SET input_char to INPUT
-		SET input_char to lower case
-		IF input_char is not 'c' or 'o'
-			OUTPUT invalid input error message
+		SET input_buffer to INPUT
+		IF input_buffer is "LIST"
+			list all customer details
+		ELSEIF input_buffer is "HISTORY <customerID>"
+			list history of said customerID
+		ELSEIF input_buffer is "DELETE <customerID>"
+			OUTPUT text prompting the user are you sure
+			DO WHILE c is not 'y' or 'n'
+				SET c to INPUT
+				IF c is not 'y' or 'n'
+					OUTPUT invalid input
+				ENDIF
+			ENDDDO WHILE
+			IF c is 'y'
+				delete the history of the customer
+			ENDIF
+		ELSEIF input_buffer is "NEW <customerID>"
+			CALL New_Customer(<customerID>)
+		ELSEIF input_buffer is "ORDER <customerID>"
+			CALL Order(<customerID>)
+		ELSEIF input_buffer is "HELP"
+			CALL Display_Help()
+		ELSEIF input_buffer is not "EXIT"
+			OUTPUT invalid command
 		ENDIF
 	ENDDO WHILE
-	IF input_char is 'c'
-		RETURN Customer_Console
-	ELSE
-		RETURN Order_Mode
-	ENDIF
 ENDSUBROUTINE
 
 
