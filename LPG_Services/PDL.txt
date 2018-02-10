@@ -19,21 +19,21 @@ Order (customer ID, 12.7kg count, 14kg count, 50kg count) -> Program a "order mo
 															 deduct inventory and produce receipts,
 															 making sure to display the product price when ordering
 
-
->> Starting point of the program, allows user to select customer or order mode
-SUBROUTINE Init_Mode returns Customer_Console or Order_Mode
-	OUTPUT initial message here
-	DO WHILE input_char is not 'c' or 'o'
+>> Starting point of the program, allows the user to log in
+SUBROUTINE Init_Mode returns true or false
+	OUTPUT initial message and "Do you want to log into the console (y/n): "
+	SET input_char to null character
+	DO WHILE input_char is not 'y' and not 'n'
 		SET input_char to INPUT
 		SET input_char to lower case
-		IF input_char is not 'c' or 'o'
+		IF input_char is not 'y' and not 'n'
 			OUTPUT invalid input error message
 		ENDIF
 	ENDDO WHILE
-	IF input_char is 'c'
-		RETURN Customer_Console
+	IF input_char is 'y'
+		RETURN true
 	ELSE
-		RETURN Order_Mode
+		RETURN false
 	ENDIF
 ENDSUBROUTINE
 
