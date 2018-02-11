@@ -38,4 +38,7 @@
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="customers.csv" />
+  </ItemGroup>
 </Project>
