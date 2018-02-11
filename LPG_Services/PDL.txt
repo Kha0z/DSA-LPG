@@ -43,6 +43,7 @@ ENDSUBROUTINE
 >> DELETE <customerID>->Deletes customer
 >> NEW->Adds a new customer to the database
 >> ORDER <customerID>->Adds a new order to the customer, and later produces a receipt
+>> QUANTITY->Shows the quantity of LPG canisters left in the company inventory
 >> HELP->Shows the help file
 >> EXIT->Returns to the previous menu
 SUBROUTINE Command_Mode
@@ -69,6 +70,8 @@ SUBROUTINE Command_Mode
 			CALL New_Customer
 		ELSEIF input_buffer is "ORDER <customerID>"
 			CALL Order(<customerID>)
+		ELSEIF input_buffer is "QUANTITY"
+			CALL Quantity()
 		ELSEIF input_buffer is "HELP"
 			CALL Display_Help()
 		ELSEIF input_buffer is not "EXIT"
@@ -78,34 +81,22 @@ SUBROUTINE Command_Mode
 ENDSUBROUTINE
 
 
-CALL begin(9600) to start serial connection for debugging
-SET LDR_PIN's mode to INPUT
-CALL attachInterrupt to attach FALLING to INT0 (pin 2)
+Sample history JSON file:
+[
+	{
+		"12.7kg": 0,
+		"14kg": 1,
+		"50kg": 0,
+		"createdDate": 1518350364
+	},
+	{
+		"12.7kg": 0,
+		"14kg": 1,
+		"50kg": 0,
+		"createdDate": 1518350364
+	}
+]
 
-CALL sevseg.begin to configure 7 segment display
-CALL sevseg.setBrightness to predefined brightness level
-
-CALL servo.attach to attach servo to SERVO_PIN
-
-LOOP
-    CALL sevseg.setNumber to display hit_count
-    IF current time passed cooloff time THEN
-        SET target_up to true
-    ENDIF 
-    IF target_up is true THEN                               
-        CALL servo.write with an angle of 90                
-    ELSE                                                    
-        CALL servo.write with an angle of 0                 
-    ENDIF                                                   
-    CALL sevseg.refreshDisplay to refresh the display       
-ENDLOOP                                                     
-                                                            
-ISR0                                                        
-    SET hit_millis to the result of CALL millis             
-    IF more than COOLOFF has passed since last_hit THEN     
-        SET last_hit to hit_millis                          
-        SET target_up to false                              
-        SET hit_count to increment by 1                     
-        CALL Serial.println to print debug message          
-    ENDIF                                                   
-ENDISR0                                                     
+Sample inventory.csv: 1st row is stock, 2nd row is price
+5;5;5
+10.0;20.0;50.0
