@@ -1,3 +1,4 @@
+1617517, 1617658
 
 This document defines the PDL (pseudocode) of the entire program, in which some 
 are seperated into subroutines (aka functions) for increased readability
